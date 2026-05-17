@@ -52,6 +52,9 @@ su - root -c "pkg install python3 py311-qt6-pyqt"
 python my_dcim_files.py
 ```
 
+## Screenshot
+
+![Main Window](mydcimfiles-main-window.png)
 ---
 
 ## License
