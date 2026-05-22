@@ -213,20 +213,24 @@ class MyDCIMFiles(QMainWindow):
 
     def _execute_download(self, remote_name, local_path):
         try:
-            print(f"Log: Downloading {remote_name}...", end=" ", flush=True) 
+            print(f"Log: Downloading {remote_name}...", flush=True) 
             self.set_loading_state(True, f"Downloading: {remote_name}")
             
+            # Reconstruim comanda ca un singur string brut, fix cum îi place lui aft-mtp-cli
+            command = f'aft-mtp-cli "get \\"{self.remote_path}/{remote_name}\\" \\"{local_path}\\""'
+            
+            # Rulăm prin shell=True ca să poată parsa ghilimelele, dar FĂRĂ capture_output
             result = subprocess.run(
-                ["aft-mtp-cli", f"get \"{self.remote_path}/{remote_name}\" \"{local_path}\""],
-                capture_output=True, text=True
+                command,
+                shell=True
             )
             
             if result.returncode == 0:
-                print(f"-> OK [{self.get_timestamp()}]")
+                print(f"Log: -> OK [{self.get_timestamp()}]\n")
             else:
-                print(f"-> FAILED! {result.stderr}")
+                print(f"Log: -> FAILED! Exit code: {result.returncode}\n")
         except Exception as e:
-            print(f"\nLog Error: {e}")
+            print(f"Log Error: {e}\n")
 
     def upload_files(self):
         files, _ = QFileDialog.getOpenFileNames(self, "Select Files to Upload")
